@@ -1,6 +1,7 @@
 import os
 from aiohttp import web
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from aiogram.types import Message
 
@@ -9,7 +10,7 @@ WEBHOOK_PATH = "/webhook"
 BASE_WEBHOOK_URL = f"https://{os.getenv('RENDER_EXTERNAL_HOSTNAME')}{WEBHOOK_PATH}"
 
 bot = Bot(token=TOKEN)
-dp = Dispatcher()
+dp = Dispatcher(storage=MemoryStorage())  # <-- фикс
 
 @dp.message()
 async def handle_message(message: Message):
