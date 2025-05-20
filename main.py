@@ -1,7 +1,7 @@
 import os
 from aiohttp import web
 from aiogram import Bot, Dispatcher
-from aiogram.webhook.aiohttp_server import setup_application
+from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from aiogram.types import Message
 
 TOKEN = os.getenv("BOT_TOKEN")
@@ -23,9 +23,11 @@ async def on_shutdown(app):
     await bot.session.close()
 
 app = web.Application()
-setup_application(app=app, dispatcher=dp, bot=bot, webhook_path=WEBHOOK_PATH)
+handler = SimpleRequestHandler(dispatcher=dp, bot=bot, webhook_path=WEBHOOK_PATH)
 app.on_startup.append(on_startup)
 app.on_shutdown.append(on_shutdown)
+
+setup_application(app, handler)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
